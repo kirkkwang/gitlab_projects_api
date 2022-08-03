@@ -22,11 +22,6 @@ puts "\n#{projects.count} projects found.\n".green
 projects.flatten.sort_by { |project| project[:name] }.each do |project|
   response = HTTParty.get("http://gitlab.com/api/v4/projects/#{project[:id]}/members/all?per_page=100", headers: { Authorization: "Bearer #{token}" })
 
-  if response.parsed_response['message'] == '401 Unauthorized'
-    puts "Looks like you don't have permissions, please enter a token!\n".red
-    exit
-  end
-
   members = response.parsed_response.map { |r| r['name'] }.join('; ')
   puts "#{'PROJECT'.underline}: #{project[:name].gsub('-', ' ').gsub('_', ' ').split(/(\W)/).map(&:capitalize).join.yellow}",
     "#{'VISIBILITY'.underline}: #{project[:visibility] == 'private' ? project[:visibility].red : project[:visibility] == 'public' ? project[:visibility].green : project[:visibility].light_black }",
