@@ -1,7 +1,7 @@
 require 'bundler'
 Bundler.require
 
-token = '' # enter your Gitlab access token
+token = '' # enter your Gitlab access token (eg. ')
 group_id = 1050736 # Notch8 Group ID
 
 stop = false
