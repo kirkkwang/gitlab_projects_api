@@ -11,6 +11,7 @@ This is a very basic imperative Ruby script to interact with the Gitlab API.  Wh
 ```shell
 git clone https://github.com/kirkkwang/gitlab_projects_api.git
 cd gitlab_projects_api
+bundle install
 ```
 - Open `gitlab_projects_api.rb` and set the `token` variable with your token from Gitlab. (Make sure to put the token in between the `''`)
   - https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html
