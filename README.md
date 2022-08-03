@@ -19,4 +19,6 @@ bundle install
 ```shell
 ruby gitlab_projects_api.rb
 ```
-Hope this is what you need!
+- Open the csv file that has been created in the root directory for all the parsed data
+
+🎈 Hope this is what you need! 🎈
