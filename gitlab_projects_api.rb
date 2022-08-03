@@ -1,7 +1,8 @@
+require_relative 'csv_creator'
 require 'bundler'
 Bundler.require
 
-token = '' # enter your Gitlab access token (eg. ')
+token = '' # enter your Gitlab access token
 group_id = 1050736 # Notch8 Group ID
 
 stop = false
@@ -19,11 +20,26 @@ projects = projects_parsed_responses.flatten.map { |project| { id: project['id']
 
 puts "\n#{projects.count} projects found.\n".green
 
+headers = ['PROJECT NAME', 'VISIBILITY', 'MEMBERS']
+project_names = []
+visibilities = []
+member_lists = []
 projects.flatten.sort_by { |project| project[:name] }.each do |project|
   response = HTTParty.get("http://gitlab.com/api/v4/projects/#{project[:id]}/members/all?per_page=100", headers: { Authorization: "Bearer #{token}" })
+  project_name = project[:name].gsub('-', ' ').gsub('_', ' ').split(/(\W)/).map(&:capitalize).join
+  visibility = project[:visibility]
+  member_list = response.parsed_response.map { |r| r['name'] }.join('; ')
+  project_names << project_name
+  visibilities << visibility
+  member_lists << member_list
 
-  members = response.parsed_response.map { |r| r['name'] }.join('; ')
-  puts "#{'PROJECT'.underline}: #{project[:name].gsub('-', ' ').gsub('_', ' ').split(/(\W)/).map(&:capitalize).join.yellow}",
-    "#{'VISIBILITY'.underline}: #{project[:visibility] == 'private' ? project[:visibility].red : project[:visibility] == 'public' ? project[:visibility].green : project[:visibility].light_black }",
-    "#{'MEMBERS'.underline}: #{members.cyan}"
+  puts "#{headers[0].underline}: #{project_name.yellow}",
+    "#{headers[1].underline}: #{visibility == 'private' ? visibility.red : visibility == 'public' ? visibility.green : visibility.light_black }",
+    "#{headers[2].underline}: #{member_list.cyan}"
 end
+
+data = project_names.zip(visibilities, member_lists)
+
+puts 'Creating CSV...'
+
+create_csv(headers, data)
